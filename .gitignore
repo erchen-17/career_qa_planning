@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# Data (runtime generated)
+data/chroma/
+data/uploads/
+data/resume_cache/
+
+# Secrets
+config.yaml
+
+# IDE
+.vscode/
+.idea/

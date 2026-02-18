@@ -1,0 +1,25 @@
+# API Keys
+openai_api_key: "sk-your-openai-key-here"
+anthropic_api_key: "sk-ant-your-anthropic-key-here"
+
+# Base URLs (optional, for proxies)
+openai_base_url: null
+anthropic_base_url: null
+
+# Embedding model (fixed to OpenAI)
+embedding_model: "text-embedding-3-small"
+
+# Chroma settings
+chroma_persist_dir: "./data/chroma"
+chroma_collection_name: "career_assistant"
+
+# Chunking settings
+chunk_size: 800
+chunk_overlap: 120
+
+# PDF rendering DPI
+pdf_dpi: 200
+
+# Server
+host: "0.0.0.0"
+port: 8000
