@@ -88,12 +88,10 @@ def check_and_remove_duplicates(
     # 清理 resume_cache（如果旧文档是 resume 类型）
     if old_doc_type == "resume":
         try:
-            from app.store.resume_cache import load_resume_text, _user_cache_path
-            cached = load_resume_text(user_id)
-            if cached is not None:
-                cache_path = _user_cache_path(user_id)
-                # 只有当缓存的 doc_id 是被删除的旧文档时才清理
-                import json
+            import json
+            from app.store.resume_cache import _user_cache_path
+            cache_path = _user_cache_path(user_id)
+            if cache_path.exists():
                 data = json.loads(cache_path.read_text(encoding="utf-8"))
                 if data.get("doc_id") == best_doc_id:
                     cache_path.unlink(missing_ok=True)

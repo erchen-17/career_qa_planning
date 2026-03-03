@@ -15,6 +15,7 @@ from app.ingest.cleaners import clean_text
 from app.ingest.converters import convert_file
 from app.llm.vlm import extract_text_from_images
 from app.store.chroma_store import get_chroma_store
+from app.store.resume_cache import save_resume_text
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,6 @@ async def ingest_file(
 
     # 简历 pinned 模式：只缓存全文，不分块入库
     if doc_type == "resume" and resume_mode == "pinned":
-        from app.store.resume_cache import save_resume_text
         save_resume_text(user_id=user_id, doc_id=doc_id, text=full_text)
         logger.info("Ingest: resume pinned mode, cached full text (%d chars)", len(full_text))
         return {
@@ -126,7 +126,6 @@ async def ingest_file(
 
     # Step 6: If resume hybrid, also cache full text
     if doc_type == "resume" and resume_mode == "hybrid":
-        from app.store.resume_cache import save_resume_text
         save_resume_text(user_id=user_id, doc_id=doc_id, text=full_text)
 
     result = {

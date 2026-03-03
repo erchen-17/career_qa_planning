@@ -26,15 +26,15 @@ SYSTEM_PROMPT = """\
 - 若问题存在歧义，优先按照最合理理解回答，而不是扩展泛泛建议。
 
 【优先级2】基于资料回答（防止幻觉）
-- 仅使用提供的简历或检索资料中的信息作为“事实依据”。
+- 仅使用提供的简历或检索资料中的信息作为"事实依据"。
 - 严禁编造简历中不存在的经历。
 - 如果资料不足以支撑判断，应明确说明：
-  “根据现有资料无法确认……以下为一般性建议”。
+  "根据现有资料无法确认……以下为一般性建议"。
 
 【优先级3】冲突处理规则
 - 若资料内容与用户当前表述冲突：
   优先相信用户当前问题中的描述。
-  可提示：“与简历信息存在差异，以下基于您当前描述分析”。
+  可提示："与简历信息存在差异，以下基于您当前描述分析"。
 
 【优先级4】避免泛泛而谈
 - 禁止输出空泛的套话。
@@ -80,7 +80,11 @@ SYSTEM_PROMPT = """\
 
 
 CONTEXT_TEMPLATE = """\
-以下是检索到的参考资料（按相关性排序）。  
+
+========================
+【参考资料】
+========================
+以下是检索到的参考资料（按相关性排序）。
 可按需使用，不必全部引用：
 
 {context_blocks}
@@ -92,15 +96,20 @@ CONTEXT_TEMPLATE = """\
 
 
 PINNED_RESUME_TEMPLATE = """\
-以下是用户完整简历（固定事实依据）：
+
+========================
+【用户简历】
+========================
+你已获取到该用户的完整简历，内容如下。请在回答中直接引用简历中的具体信息：
 
 <resume>
 {resume_text}
 </resume>
 
 注意：
+- 你已经拥有用户简历，请直接基于以上内容分析，不要说"没有看到简历"或"请提供简历"。
 - 不得编造简历中不存在的内容。
-- 若需要推断，必须明确说明“基于推断”。
+- 若需要推断，必须明确说明"基于推断"。
 """
 
 
@@ -120,32 +129,28 @@ def build_messages(
     chunks: list[dict],
     pinned_resume_text: str | None = None,
 ) -> list[dict]:
-    """Build structured messages for chat model."""
+    """Build structured messages for chat model.
 
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT}
-    ]
+    All system content is concatenated into a single system message
+    to avoid issues with models that handle multiple system messages poorly.
+    """
+
+    system_parts = [SYSTEM_PROMPT]
 
     if pinned_resume_text:
-        messages.append({
-            "role": "system",
-            "content": PINNED_RESUME_TEMPLATE.format(
-                resume_text=pinned_resume_text
-            ),
-        })
+        system_parts.append(
+            PINNED_RESUME_TEMPLATE.format(resume_text=pinned_resume_text)
+        )
 
     if chunks:
         context_str = format_context_blocks(chunks)
-        messages.append({
-            "role": "system",
-            "content": CONTEXT_TEMPLATE.format(
-                context_blocks=context_str
-            ),
-        })
+        system_parts.append(
+            CONTEXT_TEMPLATE.format(context_blocks=context_str)
+        )
 
-    messages.append({
-        "role": "user",
-        "content": query
-    })
+    messages = [
+        {"role": "system", "content": "\n".join(system_parts)},
+        {"role": "user", "content": query},
+    ]
 
     return messages

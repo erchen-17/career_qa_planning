@@ -4,7 +4,6 @@ LLM Router: maps (provider, model) to LangChain chat model instances.
 
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import Literal
 
 from langchain_anthropic import ChatAnthropic
