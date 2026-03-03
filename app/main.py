@@ -16,6 +16,48 @@ from app.core.config import settings
 from app.ingest.schemas import IngestBase64Request, IngestBatchResponse, IngestResponse, IngestUrlRequest
 from app.rag.schemas import ChatRequest
 
+_SUPPORTED_EXTS = {"pdf", "docx", "doc", "png", "jpg", "jpeg"}
+
+_CONTENT_TYPE_MAP = {
+    "application/pdf": "pdf",
+    "image/png": "png",
+    "image/jpeg": "jpg",
+    "image/jpg": "jpg",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    "application/msword": "doc",
+}
+
+
+def _ext_from_name(name: str) -> str:
+    """从文件名提取扩展名"""
+    return name.rsplit(".", 1)[-1].lower() if "." in name else ""
+
+
+def _ext_from_url(url: str) -> str:
+    """从 URL 路径提取扩展名"""
+    path = url.split("?")[0].split("#")[0]
+    last_segment = path.rsplit("/", 1)[-1]
+    return last_segment.rsplit(".", 1)[-1].lower() if "." in last_segment else ""
+
+
+def _ext_from_content_type(content_type: str) -> str:
+    """从 HTTP Content-Type 推断扩展名"""
+    ct = content_type.split(";")[0].strip().lower()
+    return _CONTENT_TYPE_MAP.get(ct, "")
+
+
+def _ext_from_magic_bytes(data: bytes) -> str:
+    """从文件头 magic bytes 推断扩展名"""
+    if data[:5] == b"%PDF-":
+        return "pdf"
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return "png"
+    if data[:2] == b"\xff\xd8":
+        return "jpg"
+    if data[:4] == b"PK\x03\x04":  # ZIP-based (DOCX)
+        return "docx"
+    return ""
+
 logging.basicConfig(  #全局配置logger
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
@@ -71,16 +113,20 @@ async def ingest(
 
     # Validate file extension
     file_name = file.filename or "unknown"
-    ext = file_name.rsplit(".", 1)[-1].lower() if "." in file_name else ""
-    if ext not in ("pdf", "docx", "doc", "png", "jpg", "jpeg"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file type: .{ext}. Supported: pdf, docx, png, jpg",
-        )
+    ext = _ext_from_name(file_name)
 
     file_bytes = await file.read()
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Empty file")
+
+    # 文件名无扩展名时，用 magic bytes 检测
+    if ext not in _SUPPORTED_EXTS:
+        ext = _ext_from_magic_bytes(file_bytes)
+    if ext not in _SUPPORTED_EXTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type: .{ext}. Supported: pdf, docx, png, jpg",
+        )
 
     # Parse tags
     tag_list = None
@@ -112,12 +158,7 @@ async def ingest_base64(req: IngestBase64Request):
     from app.ingest.service import ingest_file
 
     # Validate file extension
-    ext = req.file_name.rsplit(".", 1)[-1].lower() if "." in req.file_name else ""
-    if ext not in ("pdf", "docx", "doc", "png", "jpg", "jpeg"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file type: .{ext}. Supported: pdf, docx, png, jpg",
-        )
+    ext = _ext_from_name(req.file_name)
 
     try:
         file_bytes = base64.b64decode(req.file_content_base64)
@@ -126,6 +167,15 @@ async def ingest_base64(req: IngestBase64Request):
 
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Empty file")
+
+    # 文件名无扩展名时，用 magic bytes 检测
+    if ext not in _SUPPORTED_EXTS:
+        ext = _ext_from_magic_bytes(file_bytes)
+    if ext not in _SUPPORTED_EXTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type (file_name={req.file_name}). Supported: pdf, docx, png, jpg",
+        )
 
     tag_list = None
     if req.tags:
@@ -156,13 +206,10 @@ async def ingest_url(req: IngestUrlRequest):
 
     from app.ingest.service import ingest_file
 
-    # 验证文件扩展名
-    ext = req.file_name.rsplit(".", 1)[-1].lower() if "." in req.file_name else ""
-    if ext not in ("pdf", "docx", "doc", "png", "jpg", "jpeg"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file type: .{ext}. Supported: pdf, docx, png, jpg",
-        )
+    # 多级扩展名检测：file_name → file_url
+    ext = _ext_from_name(req.file_name)
+    if ext not in _SUPPORTED_EXTS:
+        ext = _ext_from_url(req.file_url)
 
     # 拼接完整下载 URL
     if req.file_base_url:
@@ -172,7 +219,7 @@ async def ingest_url(req: IngestUrlRequest):
     else:
         download_url = req.file_url
 
-    logger.info("ingest_url: 下载地址 = %s", download_url)
+    logger.info("ingest_url: file_name=%s, ext=%s, 下载地址=%s", req.file_name, ext, download_url)
 
     # 下载文件
     try:
@@ -188,13 +235,29 @@ async def ingest_url(req: IngestUrlRequest):
     if not file_bytes:
         raise HTTPException(status_code=400, detail="下载的文件为空")
 
+    # 扩展名仍未确定时，用 Content-Type 和 magic bytes 回退检测
+    if ext not in _SUPPORTED_EXTS:
+        ext = _ext_from_content_type(resp.headers.get("content-type", ""))
+    if ext not in _SUPPORTED_EXTS:
+        ext = _ext_from_magic_bytes(file_bytes)
+    if ext not in _SUPPORTED_EXTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"无法识别文件类型 (file_name={req.file_name}). Supported: pdf, docx, png, jpg",
+        )
+
+    # 如果 file_name 没有扩展名，补上检测到的扩展名（确保后续处理正确）
+    file_name = req.file_name
+    if "." not in file_name:
+        file_name = f"{file_name}.{ext}"
+
     tag_list = None
     if req.tags:
         tag_list = [t.strip() for t in req.tags.split(",") if t.strip()]
 
     result = await ingest_file(
         file_bytes=file_bytes,
-        file_name=req.file_name,
+        file_name=file_name,
         user_id=req.user_id,
         doc_type=req.doc_type,
         provider=req.provider,
@@ -235,15 +298,19 @@ async def ingest_batch(
 
     for file in files:
         file_name = file.filename or "unknown"
-        ext = file_name.rsplit(".", 1)[-1].lower() if "." in file_name else ""
-        if ext not in ("pdf", "docx", "doc", "png", "jpg", "jpeg"):
-            logger.warning("Batch ingest: skipping unsupported file %s", file_name)
-            failed += 1
-            continue
+        ext = _ext_from_name(file_name)
 
         file_bytes = await file.read()
         if not file_bytes:
             logger.warning("Batch ingest: skipping empty file %s", file_name)
+            failed += 1
+            continue
+
+        # 文件名无扩展名时，用 magic bytes 检测
+        if ext not in _SUPPORTED_EXTS:
+            ext = _ext_from_magic_bytes(file_bytes)
+        if ext not in _SUPPORTED_EXTS:
+            logger.warning("Batch ingest: skipping unsupported file %s", file_name)
             failed += 1
             continue
 
@@ -299,4 +366,4 @@ async def chat_endpoint(req: ChatRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host=settings.host, port=settings.port, reload=False)
+    uvicorn.run("app.main:app", host=settings.host, port=settings.port, reload=True)

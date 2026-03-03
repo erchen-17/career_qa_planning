@@ -32,3 +32,9 @@ chroma_collection_name: "career_assistant"
 chunk_size: 800
 chunk_overlap: 120
 pdf_dpi: 200
+
+# ============================================================
+# Dedup — 文档去重
+# ============================================================
+dedup_enabled: true                         # 入库后自动检测并删除重复旧文档
+dedup_similarity_threshold: 0.92            # 相似度阈值（0-1，越高越严格）

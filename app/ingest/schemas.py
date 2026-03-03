@@ -47,3 +47,5 @@ class IngestResponse(BaseModel):
     pages: int = 0
     chunks: int = 0
     text_preview: str = Field(default="", description="First 200 characters of extracted text")
+    duplicate_of: Optional[str] = Field(default=None, description="被替换的旧文档 ID（去重时返回）")
+    duplicate_file_name: Optional[str] = Field(default=None, description="被替换的旧文档文件名")

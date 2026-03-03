@@ -94,13 +94,27 @@ async def ingest_file(
 
     store.add_texts(texts=chunks, metadatas=metadatas, ids=ids)
 
+    # Step 5.5: 去重 — 检测并删除已有的重复旧文档
+    dedup_result = None
+    try:
+        from app.ingest.dedup import check_and_remove_duplicates
+        dedup_result = check_and_remove_duplicates(
+            store=store,
+            user_id=user_id,
+            new_doc_id=doc_id,
+            chunks=chunks,
+            doc_type=doc_type,
+        )
+    except Exception as e:
+        logger.warning("去重检查失败（不影响入库）: %s", e)
+
     # Step 6: If resume and pinned/hybrid, cache full text
     if doc_type == "resume" and resume_mode in ("pinned", "hybrid"):
         from app.store.resume_cache import save_resume_text
         save_resume_text(user_id=user_id, doc_id=doc_id, text=full_text)
 
     text_preview = full_text[:200]
-    return {
+    result = {
         "status": "ok",
         "doc_id": doc_id,
         "doc_type": doc_type,
@@ -108,6 +122,10 @@ async def ingest_file(
         "chunks": len(chunks),
         "text_preview": text_preview,
     }
+    if dedup_result:
+        result["duplicate_of"] = dedup_result["removed_doc_id"]
+        result["duplicate_file_name"] = dedup_result["file_name"]
+    return result
 
 
 def _guess_page(chunk_idx: int, total_chunks: int, total_pages: int) -> int:

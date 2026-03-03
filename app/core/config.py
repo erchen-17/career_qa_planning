@@ -40,6 +40,10 @@ class Settings:
     # PDF rendering
     pdf_dpi: int = 200
 
+    # Dedup
+    dedup_enabled: bool = True
+    dedup_similarity_threshold: float = 0.92
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8000
