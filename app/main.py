@@ -103,7 +103,7 @@ async def ingest(
     provider: Literal["openai", "anthropic"] = Form("openai"),
     model: str = Form("gpt-5.2"),
     tags: Optional[str] = Form(None),
-    resume_mode: Literal["rag", "pinned", "hybrid"] = Form("rag"),
+    resume_mode: Literal["rag", "pinned", "hybrid"] = Form("pinned"),
 ):
     """
     Upload a file (PDF/DOCX/PNG/JPG), extract text via VLM OCR,
@@ -277,7 +277,7 @@ async def ingest_batch(
     provider: Literal["openai", "anthropic"] = Form("openai"),
     model: str = Form("gpt-5.2"),
     tags: Optional[str] = Form(None),
-    resume_mode: Literal["rag", "pinned", "hybrid"] = Form("rag"),
+    resume_mode: Literal["rag", "pinned", "hybrid"] = Form("pinned"),
 ):
     """
     Batch upload multiple files. All files share the same user_id, doc_type, etc.

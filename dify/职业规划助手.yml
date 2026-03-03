@@ -1,0 +1,1346 @@
+app:
+  description: '职业规划助手，可上传简历内容与岗位截图，会自动存储到数据库中并在问答阶段进行使用。
+
+    本地部署后端Git: https://github.com/erchen-17/career_qa_planning'
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 职业规划助手
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.5.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      - document
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: iteration
+      id: 1771659856723-true-1772455061475-target
+      selected: false
+      source: '1771659856723'
+      sourceHandle: 'true'
+      target: '1772455061475'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1772455061475'
+        sourceType: iteration-start
+        targetType: tool
+      id: 1772455061475start-source-1772524623340-target
+      source: 1772455061475start
+      sourceHandle: source
+      target: '1772524623340'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: tool
+        targetType: answer
+      id: 1772455325907-source-1772528135049-target
+      source: '1772455325907'
+      sourceHandle: source
+      target: '1772528135049'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: if-else
+      id: 1772455061475-source-1772530447586-target
+      source: '1772455061475'
+      sourceHandle: source
+      target: '1772530447586'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 1771659856723-false-1772530447586-target
+      source: '1771659856723'
+      sourceHandle: 'false'
+      target: '1772530447586'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 1772530447586-true-17725304887420-target
+      selected: false
+      source: '1772530447586'
+      sourceHandle: 'true'
+      target: '17725304887420'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: if-else
+      id: 17725304887420-source-1772540391923-target
+      source: '17725304887420'
+      sourceHandle: source
+      target: '1772540391923'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: 1772530447586-false-1772540391923-target
+      source: '1772530447586'
+      sourceHandle: 'false'
+      target: '1772540391923'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 1772540391923-false-1772455325907-target
+      source: '1772540391923'
+      sourceHandle: 'false'
+      target: '1772455325907'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1772540391923-true-1772540463434-target
+      source: '1772540391923'
+      sourceHandle: 'true'
+      target: '1772540463434'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 1771384589903-source-1771659856723-target
+      source: '1771384589903'
+      sourceHandle: source
+      target: '1771659856723'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: ''
+          hint: ''
+          label: job_documents
+          max_length: 10
+          options: []
+          placeholder: ''
+          required: false
+          type: file-list
+          variable: job_documents
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: ''
+          hint: ''
+          label: cv
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: cv
+      height: 134
+      id: '1771384589903'
+      position:
+        x: 0
+        y: 148
+      positionAbsolute:
+        x: 0
+        y: 148
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: not empty
+            id: 183ddc6f-07db-460a-b72a-d3463afd97eb
+            value: ''
+            varType: array[file]
+            variable_selector:
+            - '1771384589903'
+            - job_documents
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 123
+      id: '1771659856723'
+      position:
+        x: 342
+        y: 153
+      positionAbsolute:
+        x: 342
+        y: 153
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        error_handle_mode: terminated
+        flatten_output: true
+        height: 201
+        is_parallel: false
+        iterator_input_type: array[file]
+        iterator_selector:
+        - '1771384589903'
+        - job_documents
+        output_selector:
+        - sys
+        - dialogue_count
+        output_type: array[number]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1772455061475start
+        title: 迭代
+        type: iteration
+        width: 486
+      height: 201
+      id: '1772455061475'
+      position:
+        x: 704
+        y: 0
+      positionAbsolute:
+        x: 704
+        y: 0
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 486
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1772455061475start
+      parentId: '1772455061475'
+      position:
+        x: 60
+        y: 77
+      positionAbsolute:
+        x: 764
+        y: 77
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          label:
+            en_US: user_id
+            ja_JP: user_id
+            pt_BR: user_id
+            zh_Hans: user_id
+          llm_description: 用户唯一标识符
+          max: null
+          min: null
+          name: user_id
+          options: []
+          placeholder:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 用户的职业规划相关问题
+            ja_JP: 用户的职业规划相关问题
+            pt_BR: 用户的职业规划相关问题
+            zh_Hans: 用户的职业规划相关问题
+          label:
+            en_US: query
+            ja_JP: query
+            pt_BR: query
+            zh_Hans: query
+          llm_description: 用户的职业规划相关问题
+          max: null
+          min: null
+          name: query
+          options: []
+          placeholder:
+            en_US: 用户的职业规划相关问题
+            ja_JP: 用户的职业规划相关问题
+            pt_BR: 用户的职业规划相关问题
+            zh_Hans: 用户的职业规划相关问题
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: openai
+          form: llm
+          human_description:
+            en_US: LLM提供商
+            ja_JP: LLM提供商
+            pt_BR: LLM提供商
+            zh_Hans: LLM提供商
+          label:
+            en_US: provider
+            ja_JP: provider
+            pt_BR: provider
+            zh_Hans: provider
+          llm_description: LLM提供商
+          max: null
+          min: null
+          name: provider
+          options: []
+          placeholder:
+            en_US: LLM提供商
+            ja_JP: LLM提供商
+            pt_BR: LLM提供商
+            zh_Hans: LLM提供商
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: gpt-4.1-mini
+          form: llm
+          human_description:
+            en_US: 使用的模型名称
+            ja_JP: 使用的模型名称
+            pt_BR: 使用的模型名称
+            zh_Hans: 使用的模型名称
+          label:
+            en_US: model
+            ja_JP: model
+            pt_BR: model
+            zh_Hans: model
+          llm_description: 使用的模型名称
+          max: null
+          min: null
+          name: model
+          options: []
+          placeholder:
+            en_US: 使用的模型名称
+            ja_JP: 使用的模型名称
+            pt_BR: 使用的模型名称
+            zh_Hans: 使用的模型名称
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 6
+          form: llm
+          human_description:
+            en_US: 检索的文档块数量
+            ja_JP: 检索的文档块数量
+            pt_BR: 检索的文档块数量
+            zh_Hans: 检索的文档块数量
+          label:
+            en_US: top_k
+            ja_JP: top_k
+            pt_BR: top_k
+            zh_Hans: top_k
+          llm_description: 检索的文档块数量
+          max: null
+          min: null
+          name: top_k
+          options: []
+          placeholder:
+            en_US: 检索的文档块数量
+            ja_JP: 检索的文档块数量
+            pt_BR: 检索的文档块数量
+            zh_Hans: 检索的文档块数量
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: auto
+          form: llm
+          human_description:
+            en_US: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            ja_JP: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            pt_BR: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            zh_Hans: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+          label:
+            en_US: retrieval_policy
+            ja_JP: retrieval_policy
+            pt_BR: retrieval_policy
+            zh_Hans: retrieval_policy
+          llm_description: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍,
+            blended混合'
+          max: null
+          min: null
+          name: retrieval_policy
+          options: []
+          placeholder:
+            en_US: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            ja_JP: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            pt_BR: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+            zh_Hans: '检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合'
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: rag
+          form: llm
+          human_description:
+            en_US: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            ja_JP: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            pt_BR: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            zh_Hans: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+          label:
+            en_US: resume_mode
+            ja_JP: resume_mode
+            pt_BR: resume_mode
+            zh_Hans: resume_mode
+          llm_description: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+          max: null
+          min: null
+          name: resume_mode
+          options: []
+          placeholder:
+            en_US: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            ja_JP: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            pt_BR: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+            zh_Hans: '简历模式: rag仅检索, pinned固定全文, hybrid混合'
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          model: ''
+          provider: ''
+          query: ''
+          resume_mode: ''
+          retrieval_policy: ''
+          top_k: ''
+          user_id: ''
+        plugin_id: null
+        plugin_unique_identifier: null
+        provider_icon:
+          background: '#FEF7C3'
+          content: 🕵️
+        provider_id: a29c6cda-310a-4468-a574-6f59456ae82e
+        provider_name: job_backend
+        provider_type: api
+        selected: false
+        title: career_chat
+        tool_configurations: {}
+        tool_description: 基于用户上传的简历和职业介绍文档，通过RAG检索相关内容并生成回答
+        tool_label: career_chat
+        tool_name: career_chat
+        tool_node_version: '2'
+        tool_parameters:
+          model:
+            type: mixed
+            value: gpt-5.2
+          provider:
+            type: mixed
+            value: openai
+          query:
+            type: mixed
+            value: '{{#sys.query#}}'
+          resume_mode:
+            type: mixed
+            value: pinned
+          retrieval_policy:
+            type: mixed
+            value: auto
+          simple_response:
+            type: constant
+            value: true
+          top_k:
+            type: constant
+            value: 10
+          user_id:
+            type: mixed
+            value: '{{#sys.user_id#}}'
+        type: tool
+      height: 51
+      id: '1772455325907'
+      position:
+        x: 2396
+        y: 315
+      positionAbsolute:
+        x: 2396
+        y: 315
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_team_authorization: true
+        iteration_id: '1772455061475'
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件服务的基础URL，如 http://host:port
+            ja_JP: 文件服务的基础URL，如 http://host:port
+            pt_BR: 文件服务的基础URL，如 http://host:port
+            zh_Hans: 文件服务的基础URL，如 http://host:port
+          label:
+            en_US: file_base_url
+            ja_JP: file_base_url
+            pt_BR: file_base_url
+            zh_Hans: file_base_url
+          llm_description: 文件服务的基础URL，如 http://host:port
+          max: null
+          min: null
+          name: file_base_url
+          options: []
+          placeholder:
+            en_US: 文件服务的基础URL，如 http://host:port
+            ja_JP: 文件服务的基础URL，如 http://host:port
+            pt_BR: 文件服务的基础URL，如 http://host:port
+            zh_Hans: 文件服务的基础URL，如 http://host:port
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件的相对路径或完整路径
+            ja_JP: 文件的相对路径或完整路径
+            pt_BR: 文件的相对路径或完整路径
+            zh_Hans: 文件的相对路径或完整路径
+          label:
+            en_US: file_url
+            ja_JP: file_url
+            pt_BR: file_url
+            zh_Hans: file_url
+          llm_description: 文件的相对路径或完整路径
+          max: null
+          min: null
+          name: file_url
+          options: []
+          placeholder:
+            en_US: 文件的相对路径或完整路径
+            ja_JP: 文件的相对路径或完整路径
+            pt_BR: 文件的相对路径或完整路径
+            zh_Hans: 文件的相对路径或完整路径
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            ja_JP: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            pt_BR: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            zh_Hans: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          label:
+            en_US: file_name
+            ja_JP: file_name
+            pt_BR: file_name
+            zh_Hans: file_name
+          llm_description: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          max: null
+          min: null
+          name: file_name
+          options: []
+          placeholder:
+            en_US: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            ja_JP: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            pt_BR: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            zh_Hans: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          label:
+            en_US: user_id
+            ja_JP: user_id
+            pt_BR: user_id
+            zh_Hans: user_id
+          llm_description: 用户唯一标识符
+          max: null
+          min: null
+          name: user_id
+          options: []
+          placeholder:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: '文档类型: resume简历, career_intro职业介绍'
+            ja_JP: '文档类型: resume简历, career_intro职业介绍'
+            pt_BR: '文档类型: resume简历, career_intro职业介绍'
+            zh_Hans: '文档类型: resume简历, career_intro职业介绍'
+          label:
+            en_US: doc_type
+            ja_JP: doc_type
+            pt_BR: doc_type
+            zh_Hans: doc_type
+          llm_description: '文档类型: resume简历, career_intro职业介绍'
+          max: null
+          min: null
+          name: doc_type
+          options: []
+          placeholder:
+            en_US: '文档类型: resume简历, career_intro职业介绍'
+            ja_JP: '文档类型: resume简历, career_intro职业介绍'
+            pt_BR: '文档类型: resume简历, career_intro职业介绍'
+            zh_Hans: '文档类型: resume简历, career_intro职业介绍'
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: openai
+          form: llm
+          human_description:
+            en_US: VLM OCR使用的LLM提供商
+            ja_JP: VLM OCR使用的LLM提供商
+            pt_BR: VLM OCR使用的LLM提供商
+            zh_Hans: VLM OCR使用的LLM提供商
+          label:
+            en_US: provider
+            ja_JP: provider
+            pt_BR: provider
+            zh_Hans: provider
+          llm_description: VLM OCR使用的LLM提供商
+          max: null
+          min: null
+          name: provider
+          options: []
+          placeholder:
+            en_US: VLM OCR使用的LLM提供商
+            ja_JP: VLM OCR使用的LLM提供商
+            pt_BR: VLM OCR使用的LLM提供商
+            zh_Hans: VLM OCR使用的LLM提供商
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: gpt-5.2
+          form: llm
+          human_description:
+            en_US: VLM OCR使用的模型
+            ja_JP: VLM OCR使用的模型
+            pt_BR: VLM OCR使用的模型
+            zh_Hans: VLM OCR使用的模型
+          label:
+            en_US: model
+            ja_JP: model
+            pt_BR: model
+            zh_Hans: model
+          llm_description: VLM OCR使用的模型
+          max: null
+          min: null
+          name: model
+          options: []
+          placeholder:
+            en_US: VLM OCR使用的模型
+            ja_JP: VLM OCR使用的模型
+            pt_BR: VLM OCR使用的模型
+            zh_Hans: VLM OCR使用的模型
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 逗号分隔的标签，用于文档分类
+            ja_JP: 逗号分隔的标签，用于文档分类
+            pt_BR: 逗号分隔的标签，用于文档分类
+            zh_Hans: 逗号分隔的标签，用于文档分类
+          label:
+            en_US: tags
+            ja_JP: tags
+            pt_BR: tags
+            zh_Hans: tags
+          llm_description: 逗号分隔的标签，用于文档分类
+          max: null
+          min: null
+          name: tags
+          options: []
+          placeholder:
+            en_US: 逗号分隔的标签，用于文档分类
+            ja_JP: 逗号分隔的标签，用于文档分类
+            pt_BR: 逗号分隔的标签，用于文档分类
+            zh_Hans: 逗号分隔的标签，用于文档分类
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: rag
+          form: llm
+          human_description:
+            en_US: 简历处理模式
+            ja_JP: 简历处理模式
+            pt_BR: 简历处理模式
+            zh_Hans: 简历处理模式
+          label:
+            en_US: resume_mode
+            ja_JP: resume_mode
+            pt_BR: resume_mode
+            zh_Hans: resume_mode
+          llm_description: 简历处理模式
+          max: null
+          min: null
+          name: resume_mode
+          options: []
+          placeholder:
+            en_US: 简历处理模式
+            ja_JP: 简历处理模式
+            pt_BR: 简历处理模式
+            zh_Hans: 简历处理模式
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          doc_type: ''
+          file_base_url: ''
+          file_name: ''
+          file_url: ''
+          model: ''
+          provider: ''
+          resume_mode: ''
+          tags: ''
+          user_id: ''
+        plugin_id: null
+        plugin_unique_identifier: null
+        provider_icon:
+          background: '#FEF7C3'
+          content: 🕵️
+        provider_id: a29c6cda-310a-4468-a574-6f59456ae82e
+        provider_name: job_backend
+        provider_type: api
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        title: ingest_document_url
+        tool_configurations: {}
+        tool_description: 通过文件下载URL上传简历或职业介绍文档，后端下载文件后进行OCR提取、分块、存入向量数据库。适用于Dify文件变量，可绕过base64长度限制
+        tool_label: ingest_document_url
+        tool_name: ingest_document_url
+        tool_node_version: '2'
+        tool_parameters:
+          doc_type:
+            type: mixed
+            value: career_intro
+          file_base_url:
+            type: mixed
+            value: http://localhost
+          file_name:
+            type: mixed
+            value: '{{#1772455061475.item.name#}}'
+          file_url:
+            type: mixed
+            value: '{{#1772455061475.item.url#}}'
+          model:
+            type: mixed
+            value: gpt-5.2
+          provider:
+            type: mixed
+            value: openai
+          resume_mode:
+            type: mixed
+            value: rag
+          tags:
+            type: mixed
+            value: null
+          user_id:
+            type: mixed
+            value: '{{#sys.user_id#}}'
+        type: tool
+      height: 81
+      id: '1772524623340'
+      parentId: '1772455061475'
+      position:
+        x: 184
+        y: 60
+      positionAbsolute:
+        x: 888
+        y: 60
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        answer: '{{#1772455325907.text#}}'
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 102
+      id: '1772528135049'
+      position:
+        x: 2738
+        y: 290
+      positionAbsolute:
+        x: 2738
+        y: 290
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: exists
+            id: 6a9a72d3-fb14-4cef-ab07-6373aa14122f
+            value: ''
+            varType: file
+            variable_selector:
+            - '1771384589903'
+            - cv
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支 2
+        type: if-else
+      height: 123
+      id: '1772530447586'
+      position:
+        x: 1310
+        y: 210
+      positionAbsolute:
+        x: 1310
+        y: 210
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_team_authorization: true
+        iteration_id: '1772455061475'
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件服务的基础URL，如 http://host:port
+            ja_JP: 文件服务的基础URL，如 http://host:port
+            pt_BR: 文件服务的基础URL，如 http://host:port
+            zh_Hans: 文件服务的基础URL，如 http://host:port
+          label:
+            en_US: file_base_url
+            ja_JP: file_base_url
+            pt_BR: file_base_url
+            zh_Hans: file_base_url
+          llm_description: 文件服务的基础URL，如 http://host:port
+          max: null
+          min: null
+          name: file_base_url
+          options: []
+          placeholder:
+            en_US: 文件服务的基础URL，如 http://host:port
+            ja_JP: 文件服务的基础URL，如 http://host:port
+            pt_BR: 文件服务的基础URL，如 http://host:port
+            zh_Hans: 文件服务的基础URL，如 http://host:port
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件的相对路径或完整路径
+            ja_JP: 文件的相对路径或完整路径
+            pt_BR: 文件的相对路径或完整路径
+            zh_Hans: 文件的相对路径或完整路径
+          label:
+            en_US: file_url
+            ja_JP: file_url
+            pt_BR: file_url
+            zh_Hans: file_url
+          llm_description: 文件的相对路径或完整路径
+          max: null
+          min: null
+          name: file_url
+          options: []
+          placeholder:
+            en_US: 文件的相对路径或完整路径
+            ja_JP: 文件的相对路径或完整路径
+            pt_BR: 文件的相对路径或完整路径
+            zh_Hans: 文件的相对路径或完整路径
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            ja_JP: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            pt_BR: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            zh_Hans: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          label:
+            en_US: file_name
+            ja_JP: file_name
+            pt_BR: file_name
+            zh_Hans: file_name
+          llm_description: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          max: null
+          min: null
+          name: file_name
+          options: []
+          placeholder:
+            en_US: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            ja_JP: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            pt_BR: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+            zh_Hans: 文件名，需包含扩展名，如 resume.pdf、intro.docx
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          label:
+            en_US: user_id
+            ja_JP: user_id
+            pt_BR: user_id
+            zh_Hans: user_id
+          llm_description: 用户唯一标识符
+          max: null
+          min: null
+          name: user_id
+          options: []
+          placeholder:
+            en_US: 用户唯一标识符
+            ja_JP: 用户唯一标识符
+            pt_BR: 用户唯一标识符
+            zh_Hans: 用户唯一标识符
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: '文档类型: resume简历, career_intro职业介绍'
+            ja_JP: '文档类型: resume简历, career_intro职业介绍'
+            pt_BR: '文档类型: resume简历, career_intro职业介绍'
+            zh_Hans: '文档类型: resume简历, career_intro职业介绍'
+          label:
+            en_US: doc_type
+            ja_JP: doc_type
+            pt_BR: doc_type
+            zh_Hans: doc_type
+          llm_description: '文档类型: resume简历, career_intro职业介绍'
+          max: null
+          min: null
+          name: doc_type
+          options: []
+          placeholder:
+            en_US: '文档类型: resume简历, career_intro职业介绍'
+            ja_JP: '文档类型: resume简历, career_intro职业介绍'
+            pt_BR: '文档类型: resume简历, career_intro职业介绍'
+            zh_Hans: '文档类型: resume简历, career_intro职业介绍'
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: openai
+          form: llm
+          human_description:
+            en_US: VLM OCR使用的LLM提供商
+            ja_JP: VLM OCR使用的LLM提供商
+            pt_BR: VLM OCR使用的LLM提供商
+            zh_Hans: VLM OCR使用的LLM提供商
+          label:
+            en_US: provider
+            ja_JP: provider
+            pt_BR: provider
+            zh_Hans: provider
+          llm_description: VLM OCR使用的LLM提供商
+          max: null
+          min: null
+          name: provider
+          options: []
+          placeholder:
+            en_US: VLM OCR使用的LLM提供商
+            ja_JP: VLM OCR使用的LLM提供商
+            pt_BR: VLM OCR使用的LLM提供商
+            zh_Hans: VLM OCR使用的LLM提供商
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: gpt-5.2
+          form: llm
+          human_description:
+            en_US: VLM OCR使用的模型
+            ja_JP: VLM OCR使用的模型
+            pt_BR: VLM OCR使用的模型
+            zh_Hans: VLM OCR使用的模型
+          label:
+            en_US: model
+            ja_JP: model
+            pt_BR: model
+            zh_Hans: model
+          llm_description: VLM OCR使用的模型
+          max: null
+          min: null
+          name: model
+          options: []
+          placeholder:
+            en_US: VLM OCR使用的模型
+            ja_JP: VLM OCR使用的模型
+            pt_BR: VLM OCR使用的模型
+            zh_Hans: VLM OCR使用的模型
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 逗号分隔的标签，用于文档分类
+            ja_JP: 逗号分隔的标签，用于文档分类
+            pt_BR: 逗号分隔的标签，用于文档分类
+            zh_Hans: 逗号分隔的标签，用于文档分类
+          label:
+            en_US: tags
+            ja_JP: tags
+            pt_BR: tags
+            zh_Hans: tags
+          llm_description: 逗号分隔的标签，用于文档分类
+          max: null
+          min: null
+          name: tags
+          options: []
+          placeholder:
+            en_US: 逗号分隔的标签，用于文档分类
+            ja_JP: 逗号分隔的标签，用于文档分类
+            pt_BR: 逗号分隔的标签，用于文档分类
+            zh_Hans: 逗号分隔的标签，用于文档分类
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: rag
+          form: llm
+          human_description:
+            en_US: 简历处理模式
+            ja_JP: 简历处理模式
+            pt_BR: 简历处理模式
+            zh_Hans: 简历处理模式
+          label:
+            en_US: resume_mode
+            ja_JP: resume_mode
+            pt_BR: resume_mode
+            zh_Hans: resume_mode
+          llm_description: 简历处理模式
+          max: null
+          min: null
+          name: resume_mode
+          options: []
+          placeholder:
+            en_US: 简历处理模式
+            ja_JP: 简历处理模式
+            pt_BR: 简历处理模式
+            zh_Hans: 简历处理模式
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: string
+        params:
+          doc_type: ''
+          file_base_url: ''
+          file_name: ''
+          file_url: ''
+          model: ''
+          provider: ''
+          resume_mode: ''
+          tags: ''
+          user_id: ''
+        plugin_id: null
+        plugin_unique_identifier: null
+        provider_icon:
+          background: '#FEF7C3'
+          content: 🕵️
+        provider_id: a29c6cda-310a-4468-a574-6f59456ae82e
+        provider_name: job_backend
+        provider_type: api
+        selected: false
+        title: ingest_document_url (1)
+        tool_configurations: {}
+        tool_description: 通过文件下载URL上传简历或职业介绍文档，后端下载文件后进行OCR提取、分块、存入向量数据库。适用于Dify文件变量，可绕过base64长度限制
+        tool_label: ingest_document_url
+        tool_name: ingest_document_url
+        tool_node_version: '2'
+        tool_parameters:
+          doc_type:
+            type: mixed
+            value: resume
+          file_base_url:
+            type: mixed
+            value: http://localhost
+          file_name:
+            type: mixed
+            value: resume
+          file_url:
+            type: mixed
+            value: '{{#1771384589903.cv.url#}}'
+          model:
+            type: mixed
+            value: gpt-5.2
+          provider:
+            type: mixed
+            value: openai
+          resume_mode:
+            type: mixed
+            value: pinned
+          tags:
+            type: mixed
+            value: null
+          user_id:
+            type: mixed
+            value: '{{#sys.user_id#}}'
+        type: tool
+      height: 51
+      id: '17725304887420'
+      position:
+        x: 1672
+        y: 207
+      positionAbsolute:
+        x: 1672
+        y: 207
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 5348d950-bb1e-46dd-a818-514aa16c7c4e
+            value: 上传
+            varType: string
+            variable_selector:
+            - sys
+            - query
+          id: 'true'
+          logical_operator: and
+        selected: false
+        title: 条件分支 3
+        type: if-else
+      height: 123
+      id: '1772540391923'
+      position:
+        x: 2034
+        y: 267
+      positionAbsolute:
+        x: 2034
+        y: 267
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 上传已完成
+        selected: false
+        title: 直接回复 2
+        type: answer
+        variables: []
+      height: 99
+      id: '1772540463434'
+      position:
+        x: 2396
+        y: 446
+      positionAbsolute:
+        x: 2396
+        y: 446
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -1422
+      y: 66.99999999999994
+      zoom: 0.7
+  rag_pipeline_variables: []

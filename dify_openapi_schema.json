@@ -78,7 +78,7 @@
                       "pinned",
                       "hybrid"
                     ],
-                    "default": "rag",
+                    "default": "pinned",
                     "description": "简历处理模式"
                   }
                 }
@@ -192,7 +192,7 @@
                       "pinned",
                       "hybrid"
                     ],
-                    "default": "rag",
+                    "default": "pinned",
                     "description": "简历处理模式"
                   }
                 }
@@ -306,8 +306,12 @@
                       "pinned",
                       "hybrid"
                     ],
-                    "default": "rag",
+                    "default": "pinned",
                     "description": "简历模式: rag仅检索, pinned固定全文, hybrid混合"
+                  },
+                  "web_search": {
+                    "type": "boolean",
+                    "description": "是否启用联网搜索（仅OpenAI），不传则使用后端配置默认值"
                   },
                   "simple_response": {
                     "type": "boolean",

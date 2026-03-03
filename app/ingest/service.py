@@ -27,7 +27,7 @@ async def ingest_file(
     provider: str,
     model: str,
     tags: Optional[list[str]] = None,
-    resume_mode: str = "rag",
+    resume_mode: str = "pinned",
 ) -> dict:
     """
     Full ingest pipeline:
@@ -62,6 +62,22 @@ async def ingest_file(
 
     # Step 3: Clean
     full_text = clean_text(full_text)
+
+    text_preview = full_text[:200]
+
+    # 简历 pinned 模式：只缓存全文，不分块入库
+    if doc_type == "resume" and resume_mode == "pinned":
+        from app.store.resume_cache import save_resume_text
+        save_resume_text(user_id=user_id, doc_id=doc_id, text=full_text)
+        logger.info("Ingest: resume pinned mode, cached full text (%d chars)", len(full_text))
+        return {
+            "status": "ok",
+            "doc_id": doc_id,
+            "doc_type": doc_type,
+            "pages": pages,
+            "chunks": 0,
+            "text_preview": text_preview,
+        }
 
     # Step 4: Chunk
     chunks = chunk_text(
@@ -108,12 +124,11 @@ async def ingest_file(
     except Exception as e:
         logger.warning("去重检查失败（不影响入库）: %s", e)
 
-    # Step 6: If resume and pinned/hybrid, cache full text
-    if doc_type == "resume" and resume_mode in ("pinned", "hybrid"):
+    # Step 6: If resume hybrid, also cache full text
+    if doc_type == "resume" and resume_mode == "hybrid":
         from app.store.resume_cache import save_resume_text
         save_resume_text(user_id=user_id, doc_id=doc_id, text=full_text)
 
-    text_preview = full_text[:200]
     result = {
         "status": "ok",
         "doc_id": doc_id,

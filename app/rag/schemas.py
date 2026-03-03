@@ -16,7 +16,7 @@ class ChatRequest(BaseModel):
     model: str = "gpt-4.1-mini"
     top_k: int = Field(default=6, ge=1, le=20)
     retrieval_policy: Literal["auto", "resume_first", "career_first", "blended"] = "auto"
-    resume_mode: Literal["rag", "pinned", "hybrid"] = "rag"
+    resume_mode: Literal["rag", "pinned", "hybrid"] = "pinned"
     simple_response: bool = Field(default=True, description="为 true 时只返回 answer 文本，适配 Dify；设为 false 返回完整 JSON")
 
 

@@ -29,9 +29,25 @@ def save_resume_text(user_id: str, doc_id: str, text: str) -> None:
 
 
 def load_resume_text(user_id: str) -> str | None:
-    """Load the pinned resume text for a user, or None if not cached."""
+    """Load the pinned resume text for a user, or None if not cached.
+
+    如果指定 user_id 没有找到缓存，则回退到最近修改的缓存文件（兜底策略）。
+    """
     path = _user_cache_path(user_id)
-    if not path.exists():
-        return None
-    data = json.loads(path.read_text(encoding="utf-8"))
-    return data.get("text")
+    if path.exists():
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data.get("text")
+
+    # 兜底：找最近修改的缓存文件
+    if _CACHE_DIR.exists():
+        cache_files = sorted(_CACHE_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if cache_files:
+            fallback = cache_files[0]
+            data = json.loads(fallback.read_text(encoding="utf-8"))
+            logger.warning(
+                "user_id=%s 无缓存，回退到最近上传的简历 (来自 user_id=%s)",
+                user_id, data.get("user_id", "unknown"),
+            )
+            return data.get("text")
+
+    return None

@@ -10,6 +10,7 @@ from typing import Literal
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
+from app.core.config import settings
 from app.llm.router import get_chat_model, Provider
 from app.rag.prompts import build_messages
 from app.rag.schemas import ChatResponse, Citation, DebugInfo
@@ -94,7 +95,7 @@ async def chat(
     provider: Provider,
     model: str,
     retrieval_policy: str = "auto",
-    resume_mode: str = "rag",
+    resume_mode: str = "pinned",
     top_k: int = 6,
 ) -> ChatResponse:
     """

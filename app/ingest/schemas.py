@@ -17,7 +17,7 @@ class IngestBase64Request(BaseModel):
     provider: Literal["openai", "anthropic"] = "openai"
     model: str = "gpt-5.2"
     tags: Optional[str] = Field(default=None, description="逗号分隔的标签")
-    resume_mode: Literal["rag", "pinned", "hybrid"] = "rag"
+    resume_mode: Literal["rag", "pinned", "hybrid"] = "pinned"
 
 
 class IngestUrlRequest(BaseModel):
@@ -29,7 +29,7 @@ class IngestUrlRequest(BaseModel):
     provider: Literal["openai", "anthropic"] = "openai"
     model: str = "gpt-5.2"
     tags: Optional[str] = Field(default=None, description="逗号分隔的标签")
-    resume_mode: Literal["rag", "pinned", "hybrid"] = "rag"
+    resume_mode: Literal["rag", "pinned", "hybrid"] = "pinned"
 
 
 class IngestBatchResponse(BaseModel):
