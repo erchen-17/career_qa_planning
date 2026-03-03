@@ -1,0 +1,395 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Career Planning Assistant API",
+    "description": "职业规划助手 - 文档上传与RAG问答接口",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://172.25.7.151:8000"
+    }
+  ],
+  "paths": {
+    "/v1/ingest_url": {
+      "post": {
+        "operationId": "ingest_document_url",
+        "summary": "上传并处理文档(URL)",
+        "description": "通过文件下载URL上传简历或职业介绍文档，后端下载文件后进行OCR提取、分块、存入向量数据库。适用于Dify文件变量，可绕过base64长度限制",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file_url",
+                  "file_name",
+                  "user_id",
+                  "doc_type"
+                ],
+                "properties": {
+                  "file_base_url": {
+                    "type": "string",
+                    "description": "文件服务的基础URL，如 http://host:port"
+                  },
+                  "file_url": {
+                    "type": "string",
+                    "description": "文件的相对路径或完整路径"
+                  },
+                  "file_name": {
+                    "type": "string",
+                    "description": "文件名，需包含扩展名，如 resume.pdf、intro.docx"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "description": "用户唯一标识符"
+                  },
+                  "doc_type": {
+                    "type": "string",
+                    "enum": [
+                      "resume",
+                      "career_intro"
+                    ],
+                    "description": "文档类型: resume简历, career_intro职业介绍"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "openai",
+                      "anthropic"
+                    ],
+                    "default": "openai",
+                    "description": "VLM OCR使用的LLM提供商"
+                  },
+                  "model": {
+                    "type": "string",
+                    "default": "gpt-5.2",
+                    "description": "VLM OCR使用的模型"
+                  },
+                  "tags": {
+                    "type": "string",
+                    "description": "逗号分隔的标签，用于文档分类"
+                  },
+                  "resume_mode": {
+                    "type": "string",
+                    "enum": [
+                      "rag",
+                      "pinned",
+                      "hybrid"
+                    ],
+                    "default": "rag",
+                    "description": "简历处理模式"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "文档处理成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "处理状态"
+                    },
+                    "doc_id": {
+                      "type": "string",
+                      "description": "生成的文档ID"
+                    },
+                    "doc_type": {
+                      "type": "string",
+                      "description": "文档类型"
+                    },
+                    "pages": {
+                      "type": "integer",
+                      "description": "文档页数"
+                    },
+                    "chunks": {
+                      "type": "integer",
+                      "description": "分块数量"
+                    },
+                    "text_preview": {
+                      "type": "string",
+                      "description": "提取文本前200字符预览"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "文件类型不支持、URL无法访问或文件为空"
+          }
+        }
+      }
+    },
+    "/v1/ingest_base64": {
+      "post": {
+        "operationId": "ingest_document",
+        "summary": "上传并处理文档(base64)",
+        "description": "上传简历或职业介绍文档，文件内容以base64编码传递，后端会进行OCR提取、分块、存入向量数据库",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file_name",
+                  "file_content_base64",
+                  "user_id",
+                  "doc_type"
+                ],
+                "properties": {
+                  "file_name": {
+                    "type": "string",
+                    "description": "文件名，需包含扩展名，如 resume.pdf、intro.docx"
+                  },
+                  "file_content_base64": {
+                    "type": "string",
+                    "description": "文件内容的base64编码字符串"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "description": "用户唯一标识符"
+                  },
+                  "doc_type": {
+                    "type": "string",
+                    "enum": [
+                      "resume",
+                      "career_intro"
+                    ],
+                    "description": "文档类型: resume简历, career_intro职业介绍"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "openai",
+                      "anthropic"
+                    ],
+                    "default": "openai",
+                    "description": "VLM OCR使用的LLM提供商"
+                  },
+                  "model": {
+                    "type": "string",
+                    "default": "gpt-5.2",
+                    "description": "VLM OCR使用的模型"
+                  },
+                  "tags": {
+                    "type": "string",
+                    "description": "逗号分隔的标签，用于文档分类"
+                  },
+                  "resume_mode": {
+                    "type": "string",
+                    "enum": [
+                      "rag",
+                      "pinned",
+                      "hybrid"
+                    ],
+                    "default": "rag",
+                    "description": "简历处理模式"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "文档处理成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "处理状态"
+                    },
+                    "doc_id": {
+                      "type": "string",
+                      "description": "生成的文档ID"
+                    },
+                    "doc_type": {
+                      "type": "string",
+                      "description": "文档类型"
+                    },
+                    "pages": {
+                      "type": "integer",
+                      "description": "文档页数"
+                    },
+                    "chunks": {
+                      "type": "integer",
+                      "description": "分块数量"
+                    },
+                    "text_preview": {
+                      "type": "string",
+                      "description": "提取文本前200字符预览"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "文件类型不支持、base64无效或文件为空"
+          }
+        }
+      }
+    },
+    "/v1/chat": {
+      "post": {
+        "operationId": "career_chat",
+        "summary": "职业规划RAG问答",
+        "description": "基于用户上传的简历和职业介绍文档，通过RAG检索相关内容并生成回答",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id",
+                  "query"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "description": "用户唯一标识符"
+                  },
+                  "query": {
+                    "type": "string",
+                    "description": "用户的职业规划相关问题"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "openai",
+                      "anthropic"
+                    ],
+                    "default": "openai",
+                    "description": "LLM提供商"
+                  },
+                  "model": {
+                    "type": "string",
+                    "default": "gpt-4.1-mini",
+                    "description": "使用的模型名称"
+                  },
+                  "top_k": {
+                    "type": "integer",
+                    "default": 6,
+                    "minimum": 1,
+                    "maximum": 20,
+                    "description": "检索的文档块数量"
+                  },
+                  "retrieval_policy": {
+                    "type": "string",
+                    "enum": [
+                      "auto",
+                      "resume_first",
+                      "career_first",
+                      "blended"
+                    ],
+                    "default": "auto",
+                    "description": "检索策略: auto自动判断, resume_first优先简历, career_first优先职业介绍, blended混合"
+                  },
+                  "resume_mode": {
+                    "type": "string",
+                    "enum": [
+                      "rag",
+                      "pinned",
+                      "hybrid"
+                    ],
+                    "default": "rag",
+                    "description": "简历模式: rag仅检索, pinned固定全文, hybrid混合"
+                  },
+                  "simple_response": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "为true时只返回answer文本，适配Dify"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功返回问答结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string",
+                      "description": "AI生成的回答"
+                    },
+                    "citations": {
+                      "type": "array",
+                      "description": "引用的文档来源列表",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "doc_id": {
+                            "type": "string",
+                            "description": "文档ID"
+                          },
+                          "doc_type": {
+                            "type": "string",
+                            "description": "文档类型: resume或career_intro"
+                          },
+                          "file_name": {
+                            "type": "string",
+                            "description": "原始文件名"
+                          },
+                          "page": {
+                            "type": "integer",
+                            "description": "页码"
+                          },
+                          "chunk_id": {
+                            "type": "integer",
+                            "description": "文档块ID"
+                          },
+                          "snippet": {
+                            "type": "string",
+                            "description": "引用的文本片段"
+                          }
+                        }
+                      }
+                    },
+                    "debug": {
+                      "type": "object",
+                      "nullable": true,
+                      "description": "调试信息",
+                      "properties": {
+                        "retrieval_policy": {
+                          "type": "string"
+                        },
+                        "used_resume_pinned": {
+                          "type": "boolean"
+                        },
+                        "retrieved_chunks": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "请求参数校验失败"
+          }
+        }
+      }
+    }
+  }
+}

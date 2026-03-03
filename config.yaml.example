@@ -1,25 +1,34 @@
-# API Keys
-openai_api_key: "sk-your-openai-key-here"
-anthropic_api_key: "sk-ant-your-anthropic-key-here"
+# ============================================================
+# Server
+# ============================================================
+host: "0.0.0.0"
+port: 8000
 
-# Base URLs (optional, for proxies)
-openai_base_url: null
+# ============================================================
+# LLM — Chat & VLM OCR
+# ============================================================
+openai_api_key: "sk-your-openai-key-here"
+openai_base_url: null                       # 代理地址，不用代理则设为 null
+
+anthropic_api_key: "sk-ant-your-anthropic-key-here"
 anthropic_base_url: null
 
-# Embedding model (fixed to OpenAI)
+# ============================================================
+# Embedding
+# ============================================================
 embedding_model: "text-embedding-3-small"
+embedding_api_key: ""                       # 不填则复用 openai_api_key
+embedding_base_url: null                    # 不填则复用 openai_base_url
 
-# Chroma settings
+# ============================================================
+# Storage — ChromaDB
+# ============================================================
 chroma_persist_dir: "./data/chroma"
 chroma_collection_name: "career_assistant"
 
-# Chunking settings
+# ============================================================
+# Processing
+# ============================================================
 chunk_size: 800
 chunk_overlap: 120
-
-# PDF rendering DPI
 pdf_dpi: 200
-
-# Server
-host: "0.0.0.0"
-port: 8000

@@ -20,10 +20,13 @@ class ChromaStore:
     """Thin wrapper around Chroma for add / query with metadata filters."""
 
     def __init__(self):
+        emb_api_key = settings.embedding_api_key or settings.openai_api_key
+        emb_base_url = settings.embedding_base_url or settings.openai_base_url
+
         self._embedding_fn = OpenAIEmbeddings(
             model=settings.embedding_model,
-            api_key=settings.openai_api_key,
-            **({"base_url": settings.openai_base_url} if settings.openai_base_url else {}),
+            api_key=emb_api_key,
+            **({"base_url": emb_base_url} if emb_base_url else {}),
         )
         persist_dir = str(settings.chroma_persist_path)
         self._client = chromadb.PersistentClient(path=persist_dir)

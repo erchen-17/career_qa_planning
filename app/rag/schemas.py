@@ -17,6 +17,7 @@ class ChatRequest(BaseModel):
     top_k: int = Field(default=6, ge=1, le=20)
     retrieval_policy: Literal["auto", "resume_first", "career_first", "blended"] = "auto"
     resume_mode: Literal["rag", "pinned", "hybrid"] = "rag"
+    simple_response: bool = Field(default=True, description="为 true 时只返回 answer 文本，适配 Dify；设为 false 返回完整 JSON")
 
 
 class Citation(BaseModel):

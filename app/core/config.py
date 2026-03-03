@@ -26,6 +26,8 @@ class Settings:
 
     # Embedding
     embedding_model: str = "text-embedding-3-small"
+    embedding_api_key: str = ""
+    embedding_base_url: Optional[str] = None
 
     # Chroma
     chroma_persist_dir: str = "./data/chroma"
@@ -69,6 +71,8 @@ def load_settings(config_path: Path | None = None) -> Settings:
         "anthropic_api_key": os.getenv("ANTHROPIC_API_KEY"),
         "openai_base_url": os.getenv("OPENAI_BASE_URL"),
         "anthropic_base_url": os.getenv("ANTHROPIC_BASE_URL"),
+        "embedding_api_key": os.getenv("EMBEDDING_API_KEY"),
+        "embedding_base_url": os.getenv("EMBEDDING_BASE_URL"),
     }
 
     for key, env_val in env_overrides.items():
