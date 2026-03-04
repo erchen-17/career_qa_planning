@@ -62,7 +62,7 @@ app/
 - 启动方式：`uvicorn app.main:app` 或 `python -m app.main`
 - 语言：代码注释和文档使用中文
 
-## 敏感文件（勿提交）
+## 敏感文件（勿提交，但可以正常读取）
 
 - `config.yaml` — 含 API 密钥
 - `data/` — 运行时生成的用户数据

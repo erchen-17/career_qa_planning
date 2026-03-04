@@ -55,6 +55,12 @@ class Settings:
     # 为 True 时给 OpenAI 模型绑定 web_search_preview 工具
     web_search_enabled: bool = False
 
+    # RAG — 多查询扩展（比较型/探索型问题自动扩展为多个子查询以提升召回率）
+    multi_query_mode: str = "off"                # "off" / "auto" / "always"
+    multi_query_max_queries: int = 3             # 最多生成子查询数量
+    multi_query_provider: Optional[str] = None   # 扩展用 provider，None 复用 chat_provider
+    multi_query_model: Optional[str] = None      # 扩展用模型，None 复用 chat_model
+
     @property
     def chroma_persist_path(self) -> Path:
         """Return absolute path for Chroma persistence directory."""

@@ -261,6 +261,7 @@ async def chat_endpoint(req: ChatRequest) -> ChatResponse | PlainTextResponse:
         retrieval_policy=req.retrieval_policy,
         resume_mode=req.resume_mode,
         top_k=req.top_k,
+        multi_query=req.multi_query,
     )
 
     if req.simple_response:

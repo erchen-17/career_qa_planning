@@ -44,3 +44,9 @@ dedup_similarity_threshold: 0.78             # 相似度阈值（0-1，越高越
 # ============================================================
 context_injection: "system"                  # "system" 或 "human"，部分第三方 API 不支持 system message 时设为 "human"
 web_search_enabled: false                    # 为 true 时给 OpenAI 模型绑定 web_search_preview 工具，第三方中转站可能不支持
+
+# 多查询扩展：对比较型/探索型问题自动扩展为多个子查询以提升召回率
+multi_query_mode: "off"                      # "off" 关闭 / "auto" LLM自动判断是否扩展 / "always" 始终扩展
+multi_query_max_queries: 3                   # 最多生成子查询数量
+multi_query_provider: null                   # 扩展用 LLM provider，null 时复用 chat_provider
+multi_query_model: null                      # 扩展用模型，null 时复用 chat_model（建议用轻量模型如 gpt-4.1-mini）

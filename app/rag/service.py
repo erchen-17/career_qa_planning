@@ -6,12 +6,12 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Literal
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.core.config import settings
 from app.llm.router import get_chat_model, Provider
+from app.rag.expander import force_expand, maybe_expand, merge_results
 from app.rag.prompts import build_messages
 from app.rag.schemas import ChatResponse, Citation, DebugInfo
 from app.store.chroma_store import get_chroma_store
@@ -97,14 +97,16 @@ async def chat(
     retrieval_policy: str = "auto",
     resume_mode: str = "pinned",
     top_k: int = 6,
+    multi_query: str | None = None,
 ) -> ChatResponse:
     """
     Full RAG pipeline:
       1. Detect/apply retrieval policy
-      2. Retrieve relevant chunks
-      3. Optionally inject pinned resume
-      4. Build prompt and call LLM
-      5. Return answer + citations
+      2. Multi-query expansion (if enabled)
+      3. Retrieve relevant chunks
+      4. Optionally inject pinned resume
+      5. Build prompt and call LLM
+      6. Return answer + citations
     """
     # Step 1: Resolve policy
     if retrieval_policy == "auto":
@@ -113,11 +115,51 @@ async def chat(
         effective_policy = retrieval_policy
     logger.info("Chat: user=%s, policy=%s (effective=%s)", user_id, retrieval_policy, effective_policy)
 
-    # Step 2: Retrieve
-    chunks = _retrieve(query, user_id, effective_policy, top_k)
-    logger.info("Chat: retrieved %d chunks", len(chunks))
+    # Step 2: Multi-query expansion
+    effective_mq_mode = multi_query or settings.multi_query_mode
+    expanded = False
+    sub_queries: list[str] = []
 
-    # Step 3: Pinned resume
+    if effective_mq_mode in ("auto", "always"):
+        expansion_provider = settings.multi_query_provider or provider or settings.chat_provider or "openai"
+        expansion_model = settings.multi_query_model or model or settings.chat_model or "gpt-5.1"
+        try:
+            if effective_mq_mode == "always":
+                sub_queries = await force_expand(
+                    query=query,
+                    provider=expansion_provider,
+                    model=expansion_model,
+                    max_queries=settings.multi_query_max_queries,
+                )
+            else:  # auto
+                sub_queries = await maybe_expand(
+                    query=query,
+                    provider=expansion_provider,
+                    model=expansion_model,
+                    max_queries=settings.multi_query_max_queries,
+                )
+            expanded = bool(sub_queries)
+            if expanded:
+                logger.info("Chat: 多查询扩展生成 %d 个子查询: %s", len(sub_queries), sub_queries)
+            else:
+                logger.info("Chat: LLM 判断无需扩展")
+        except Exception as e:
+            logger.warning("Chat: 多查询扩展失败，回退到单查询: %s", e)
+
+    # Step 3: Retrieve
+    if expanded:
+        all_queries = [query] + sub_queries
+        per_query_k = max(top_k // len(all_queries) + 1, 2)
+        results_per_query = [
+            _retrieve(q, user_id, effective_policy, per_query_k)
+            for q in all_queries
+        ]
+        chunks = merge_results(results_per_query, top_k)
+    else:
+        chunks = _retrieve(query, user_id, effective_policy, top_k)
+    logger.info("Chat: retrieved %d chunks (expanded=%s)", len(chunks), expanded)
+
+    # Step 4: Pinned resume
     pinned_text = None
     used_pinned = False
     if resume_mode in ("pinned", "hybrid"):
@@ -130,7 +172,7 @@ async def chat(
     if resume_mode == "pinned" and used_pinned:
         chunks = [c for c in chunks if c.get("metadata", {}).get("doc_type") != "resume"]
 
-    # Step 4: Build messages and call LLM
+    # Step 5: Build messages and call LLM
     messages_raw = build_messages(
         query=query, chunks=chunks,
         pinned_resume_text=pinned_text,
@@ -161,12 +203,14 @@ async def chat(
     answer = response.content
     logger.info("Chat: answer length=%d", len(answer) if answer else 0)
 
-    # Step 5: Build response
+    # Step 6: Build response
     citations = _chunks_to_citations(chunks)
     debug = DebugInfo(
         retrieval_policy=effective_policy,
         used_resume_pinned=used_pinned,
         retrieved_chunks=len(chunks),
+        multi_query_expanded=expanded,
+        sub_queries=sub_queries,
     )
 
     return ChatResponse(answer=answer, citations=citations, debug=debug)
