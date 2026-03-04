@@ -37,7 +37,7 @@ chunk_overlap: 120                           # 分块重叠区大小
 pdf_dpi: 200                                 # PDF 渲染 DPI（用于 VLM OCR）
 
 dedup_enabled: true                          # 入库后自动检测并删除重复旧文档
-dedup_similarity_threshold: 0.92             # 相似度阈值（0-1，越高越严格）
+dedup_similarity_threshold: 0.78             # 相似度阈值（0-1，越高越严格）
 
 # ============================================================
 # RAG — 检索与回答

@@ -7,7 +7,12 @@ app:
   mode: advanced-chat
   name: 职业规划助手
   use_icon_as_answer_icon: false
-dependencies: []
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.2.8@aae2be0913b8c6f0b80cff58e08d7a8b4c214569b41778413fcaea204561ff16
+    version: null
 kind: app
 version: 0.5.0
 workflow:
@@ -182,11 +187,46 @@ workflow:
     - data:
         isInLoop: false
         sourceType: start
-        targetType: if-else
-      id: 1771384589903-source-1771659856723-target
+        targetType: question-classifier
+      id: 1771384589903-source-1772620859136-target
       source: '1771384589903'
       sourceHandle: source
+      target: '1772620859136'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: if-else
+      id: 1772620859136-1-1771659856723-target
+      source: '1772620859136'
+      sourceHandle: '1'
       target: '1771659856723'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: llm
+      id: 1772620859136-2-1772620912639-target
+      source: '1772620859136'
+      sourceHandle: '2'
+      target: '1772620912639'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1772620912639-source-1772620926655-target
+      source: '1772620912639'
+      sourceHandle: source
+      target: '1772620926655'
       targetHandle: target
       type: custom
       zIndex: 0
@@ -235,14 +275,14 @@ workflow:
           required: false
           type: text-input
           variable: chat_model_name
-      height: 160
+      height: 159
       id: '1771384589903'
       position:
         x: 0
-        y: 135
+        y: 162
       positionAbsolute:
         x: 0
-        y: 135
+        y: 162
       selected: false
       sourcePosition: right
       targetPosition: left
@@ -264,19 +304,19 @@ workflow:
         selected: false
         title: 条件分支
         type: if-else
-      height: 123
+      height: 122
       id: '1771659856723'
       position:
-        x: 342
+        x: 703
         y: 153
       positionAbsolute:
-        x: 342
+        x: 703
         y: 153
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
     - data:
         error_handle_mode: terminated
         flatten_output: true
@@ -299,10 +339,10 @@ workflow:
       height: 201
       id: '1772455061475'
       position:
-        x: 704
+        x: 1064
         y: 0
       positionAbsolute:
-        x: 704
+        x: 1064
         y: 0
       selected: false
       sourcePosition: right
@@ -322,10 +362,10 @@ workflow:
       parentId: '1772455061475'
       position:
         x: 60
-        y: 77
+        y: 76
       positionAbsolute:
-        x: 764
-        y: 77
+        x: 1124
+        y: 76
       selectable: false
       sourcePosition: right
       targetPosition: left
@@ -585,19 +625,19 @@ workflow:
             type: mixed
             value: '{{#sys.user_id#}}'
         type: tool
-      height: 81
+      height: 79
       id: '1772455325907'
       position:
-        x: 2396
-        y: 300
+        x: 2753
+        y: 297.1428571428571
       positionAbsolute:
-        x: 2396
-        y: 300
+        x: 2753
+        y: 297.1428571428571
       selected: true
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
     - data:
         isInIteration: true
         isInLoop: false
@@ -914,20 +954,20 @@ workflow:
             type: mixed
             value: '{{#sys.user_id#}}'
         type: tool
-      height: 81
+      height: 79
       id: '1772524623340'
       parentId: '1772455061475'
       position:
         x: 184
         y: 60
       positionAbsolute:
-        x: 888
+        x: 1248
         y: 60
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
       zIndex: 1002
     - data:
         answer: '{{#1772455325907.text#}}'
@@ -935,19 +975,19 @@ workflow:
         title: 直接回复
         type: answer
         variables: []
-      height: 102
+      height: 101
       id: '1772528135049'
       position:
-        x: 2738
-        y: 290
+        x: 3094
+        y: 289
       positionAbsolute:
-        x: 2738
-        y: 290
+        x: 3094
+        y: 289
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
     - data:
         cases:
         - case_id: 'true'
@@ -964,19 +1004,19 @@ workflow:
         selected: false
         title: 条件分支 2
         type: if-else
-      height: 123
+      height: 122
       id: '1772530447586'
       position:
-        x: 1310
+        x: 1670
         y: 210
       positionAbsolute:
-        x: 1310
+        x: 1670
         y: 210
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
     - data:
         isInIteration: true
         isInLoop: false
@@ -1289,19 +1329,19 @@ workflow:
             type: mixed
             value: '{{#sys.user_id#}}'
         type: tool
-      height: 51
+      height: 50
       id: '17725304887420'
       position:
-        x: 1672
-        y: 207
+        x: 2031
+        y: 208
       positionAbsolute:
-        x: 1672
-        y: 207
+        x: 2031
+        y: 208
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
       zIndex: 1002
     - data:
         cases:
@@ -1319,40 +1359,126 @@ workflow:
         selected: false
         title: 条件分支 3
         type: if-else
-      height: 123
+      height: 122
       id: '1772540391923'
       position:
-        x: 2034
+        x: 2392
         y: 267
       positionAbsolute:
-        x: 2034
+        x: 2392
         y: 267
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
     - data:
         answer: 上传已完成
         selected: false
         title: 直接回复 2
         type: answer
         variables: []
-      height: 99
+      height: 98
       id: '1772540463434'
       position:
-        x: 2396
-        y: 461
+        x: 2753
+        y: 459
       positionAbsolute:
-        x: 2396
-        y: 461
+        x: 2753
+        y: 459
       selected: false
       sourcePosition: right
       targetPosition: left
       type: custom
-      width: 242
+      width: 241
+    - data:
+        classes:
+        - id: '1'
+          name: 用户输入与职业规划相关
+        - id: '2'
+          name: 用户输入与职业规划相关性较弱
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-5.1
+          provider: langgenius/openai/openai
+        query_variable_selector:
+        - sys
+        - query
+        selected: false
+        title: 问题分类器
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 168
+      id: '1772620859136'
+      position:
+        x: 342
+        y: 158
+      positionAbsolute:
+        x: 342
+        y: 158
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params: {}
+          mode: chat
+          name: gpt-5.1
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: 72228c22-eaf8-48aa-a647-da3f56880fcb
+          role: system
+          text: ''
+        - id: 5eed9c4a-00f7-4740-a546-d45bf2e64ed5
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1772620912639'
+      position:
+        x: 703
+        y: 355
+      positionAbsolute:
+        x: 703
+        y: 355
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        answer: '{{#1772620912639.text#}}'
+        selected: false
+        title: 直接回复 3
+        type: answer
+        variables: []
+      height: 101
+      id: '1772620926655'
+      position:
+        x: 1044
+        y: 347
+      positionAbsolute:
+        x: 1044
+        y: 347
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
     viewport:
-      x: 0
-      y: 0
+      x: -1683
+      y: -2.9999999999998295
       zoom: 0.7
   rag_pipeline_variables: []

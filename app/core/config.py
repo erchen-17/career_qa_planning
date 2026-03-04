@@ -47,7 +47,7 @@ class Settings:
     pdf_dpi: int = 200
 
     dedup_enabled: bool = True
-    dedup_similarity_threshold: float = 0.92
+    dedup_similarity_threshold: float = 0.78
 
     # RAG — 检索与回答
     # 部分第三方 API 会忽略 system message，设为 "human" 可将资料注入到用户消息中

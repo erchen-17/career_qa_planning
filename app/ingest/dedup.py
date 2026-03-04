@@ -51,7 +51,9 @@ def check_and_remove_duplicates(
             hit_doc_id = hit["metadata"].get("doc_id", "")
             if hit_doc_id == new_doc_id:
                 continue  # 跳过自身
-            doc_scores[hit_doc_id].append(hit["score"])
+            # Chroma 返回的是距离（越小越相似），转换为相似度（越大越相似）
+            similarity = 1.0 / (1.0 + hit["score"])
+            doc_scores[hit_doc_id].append(similarity)
             if hit_doc_id not in doc_meta:
                 doc_meta[hit_doc_id] = hit["metadata"]
 
