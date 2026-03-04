@@ -30,44 +30,9 @@ pip install -r requirements.txt
 cp config.yaml.example config.yaml
 ```
 
-编辑 `config.yaml`，完整配置项参考 `config.yaml.example`，核心配置：
-
-```yaml
-# LLM — 默认模型（请求传入时以请求为准）
-chat_provider: "openai"
-chat_model: "gpt-5.1"
-
-openai_api_key: "sk-your-openai-key"
-openai_base_url: null                       # 代理地址，不用代理则设为 null
-anthropic_api_key: "sk-ant-your-anthropic-key"
-anthropic_base_url: null
-
-# Embedding
-embedding_model: "text-embedding-3-small"
-embedding_api_key: ""                       # 不填则复用 openai_api_key
-embedding_base_url: null                    # 不填则复用 openai_base_url
-
-# 去重
-dedup_enabled: true
-dedup_similarity_threshold: 0.92
-
-# 资料注入位置："system" 或 "human"
-context_injection: "system"
-
-# 联网搜索（仅 OpenAI）
-web_search_enabled: false
-```
+编辑 `config.yaml`，完整配置项参考 `config.yaml.example`
 
 也可以通过环境变量覆盖（优先级高于 YAML）：
-
-```bash
-export OPENAI_API_KEY="sk-..."
-export OPENAI_BASE_URL="https://..."
-export ANTHROPIC_API_KEY="sk-ant-..."
-export ANTHROPIC_BASE_URL="https://..."
-export EMBEDDING_API_KEY="sk-..."
-export EMBEDDING_BASE_URL="https://..."
-```
 
 ### 3. 启动服务
 
@@ -84,10 +49,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 启动后访问：
 - Swagger 文档：http://localhost:8000/docs
 - 健康检查：http://localhost:8000/health
-
-## API 接口
-
-详细的接口文档见 [docs/API.md](docs/API.md)。
 
 ### 接口概览
 
