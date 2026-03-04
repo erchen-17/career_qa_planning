@@ -13,7 +13,7 @@ class ChatRequest(BaseModel):
     user_id: str
     query: str
     provider: Literal["openai", "anthropic"] = "openai"
-    model: str = "gpt-4.1-mini"
+    model: str = "gpt-5.1"
     top_k: int = Field(default=6, ge=1, le=20)
     retrieval_policy: Literal["auto", "resume_first", "career_first", "blended"] = "auto"
     resume_mode: Literal["rag", "pinned", "hybrid"] = "pinned"

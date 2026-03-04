@@ -131,7 +131,11 @@ async def chat(
         chunks = [c for c in chunks if c.get("metadata", {}).get("doc_type") != "resume"]
 
     # Step 4: Build messages and call LLM
-    messages_raw = build_messages(query=query, chunks=chunks, pinned_resume_text=pinned_text)
+    messages_raw = build_messages(
+        query=query, chunks=chunks,
+        pinned_resume_text=pinned_text,
+        context_injection=settings.context_injection,
+    )
 
     # Convert to LangChain message objects
     lc_messages = []
@@ -141,9 +145,21 @@ async def chat(
         else:
             lc_messages.append(HumanMessage(content=msg["content"]))
 
-    llm = get_chat_model(provider=provider, model=model)
+    # config 作为 fallback，请求传入的值优先
+    effective_provider = provider or settings.chat_provider or "openai"
+    effective_model = model or settings.chat_model or "gpt-5.1"
+
+    logger.info("Chat: using provider=%s, model=%s", effective_provider, effective_model)
+    llm = get_chat_model(provider=effective_provider, model=effective_model)
+
+    # 联网搜索：仅 OpenAI provider 支持
+    if settings.web_search_enabled and effective_provider == "openai":
+        llm = llm.bind_tools([{"type": "web_search_preview"}])
+        logger.info("Chat: web_search_preview enabled")
+
     response = await llm.ainvoke(lc_messages)
     answer = response.content
+    logger.info("Chat: answer length=%d", len(answer) if answer else 0)
 
     # Step 5: Build response
     citations = _chunks_to_citations(chunks)

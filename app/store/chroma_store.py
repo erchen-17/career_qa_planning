@@ -68,7 +68,7 @@ class ChromaStore:
         Returns a list of dicts:
           {"content": str, "metadata": dict, "score": float}
         """
-        results = self._vectorstore.similarity_search_with_relevance_scores(
+        results = self._vectorstore.similarity_search_with_score(
             query=query_text,
             k=top_k,
             filter=where,

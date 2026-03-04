@@ -227,14 +227,22 @@ workflow:
           required: false
           type: file
           variable: cv
-      height: 134
+        - default: ''
+          hint: ''
+          label: chat_model_name
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: chat_model_name
+      height: 160
       id: '1771384589903'
       position:
         x: 0
-        y: 148
+        y: 135
       positionAbsolute:
         x: 0
-        y: 148
+        y: 135
       selected: false
       sourcePosition: right
       targetPosition: left
@@ -540,7 +548,11 @@ workflow:
         provider_id: a29c6cda-310a-4468-a574-6f59456ae82e
         provider_name: job_backend
         provider_type: api
-        selected: false
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 500
+        selected: true
         title: career_chat
         tool_configurations: {}
         tool_description: 基于用户上传的简历和职业介绍文档，通过RAG检索相关内容并生成回答
@@ -550,7 +562,7 @@ workflow:
         tool_parameters:
           model:
             type: mixed
-            value: gpt-5.2
+            value: '{{#1771384589903.chat_model_name#}}'
           provider:
             type: mixed
             value: openai
@@ -568,19 +580,19 @@ workflow:
             value: true
           top_k:
             type: constant
-            value: 10
+            value: 20
           user_id:
             type: mixed
             value: '{{#sys.user_id#}}'
         type: tool
-      height: 51
+      height: 81
       id: '1772455325907'
       position:
         x: 2396
-        y: 315
+        y: 300
       positionAbsolute:
         x: 2396
-        y: 315
+        y: 300
       selected: true
       sourcePosition: right
       targetPosition: left
@@ -1330,10 +1342,10 @@ workflow:
       id: '1772540463434'
       position:
         x: 2396
-        y: 446
+        y: 461
       positionAbsolute:
         x: 2396
-        y: 446
+        y: 461
       selected: false
       sourcePosition: right
       targetPosition: left

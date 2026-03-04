@@ -1,40 +1,46 @@
 # ============================================================
-# Server
+# Server — 服务基础配置
 # ============================================================
 host: "0.0.0.0"
 port: 8000
 
 # ============================================================
-# LLM — Chat & VLM OCR
+# LLM — API 提供商 & 默认模型
 # ============================================================
+chat_provider: "openai"                      # 默认 provider，请求传入时以请求为准
+chat_model: "gpt-5.1"                        # 默认模型名，请求传入时以请求为准
+
 openai_api_key: "sk-your-openai-key-here"
-openai_base_url: null                       # 代理地址，不用代理则设为 null
+openai_base_url: null                        # 代理地址，不用代理则设为 null
 
 anthropic_api_key: "sk-ant-your-anthropic-key-here"
 anthropic_base_url: null
 
 # ============================================================
-# Embedding
+# Embedding — 向量嵌入
 # ============================================================
 embedding_model: "text-embedding-3-small"
-embedding_api_key: ""                       # 不填则复用 openai_api_key
-embedding_base_url: null                    # 不填则复用 openai_base_url
+embedding_api_key: ""                        # 不填则复用 openai_api_key
+embedding_base_url: null                     # 不填则复用 openai_base_url
 
 # ============================================================
-# Storage — ChromaDB
+# Storage — ChromaDB 向量数据库
 # ============================================================
 chroma_persist_dir: "./data/chroma"
 chroma_collection_name: "career_assistant"
 
 # ============================================================
-# Processing
+# Ingest — 文档摄入管线
 # ============================================================
-chunk_size: 800
-chunk_overlap: 120
-pdf_dpi: 200
+chunk_size: 800                              # 中文分块大小（字符数）
+chunk_overlap: 120                           # 分块重叠区大小
+pdf_dpi: 200                                 # PDF 渲染 DPI（用于 VLM OCR）
+
+dedup_enabled: true                          # 入库后自动检测并删除重复旧文档
+dedup_similarity_threshold: 0.92             # 相似度阈值（0-1，越高越严格）
 
 # ============================================================
-# Dedup — 文档去重
+# RAG — 检索与回答
 # ============================================================
-dedup_enabled: true                         # 入库后自动检测并删除重复旧文档
-dedup_similarity_threshold: 0.85            # 相似度阈值（0-1，越高越严格）
+context_injection: "system"                  # "system" 或 "human"，部分第三方 API 不支持 system message 时设为 "human"
+web_search_enabled: false                    # 为 true 时给 OpenAI 模型绑定 web_search_preview 工具，第三方中转站可能不支持

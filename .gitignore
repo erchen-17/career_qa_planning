@@ -10,9 +10,7 @@ build/
 venv/
 
 # Data (runtime generated)
-data/chroma/
-data/uploads/
-data/resume_cache/
+data/*
 
 # Secrets
 config.yaml
@@ -22,5 +20,3 @@ config.yaml
 .idea/
 
 test/
-
-CLAUDE.md

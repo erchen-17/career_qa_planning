@@ -18,35 +18,42 @@ _CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 
 @dataclass
 class Settings:
-    # API keys
+    # Server — 服务基础配置
+    host: str = "0.0.0.0"
+    port: int = 8000
+
+    # LLM — API 提供商 & 默认模型
+    chat_provider: Optional[str] = None
+    chat_model: Optional[str] = None
+
     openai_api_key: str = ""
-    anthropic_api_key: str = ""
     openai_base_url: Optional[str] = None
+
+    anthropic_api_key: str = ""
     anthropic_base_url: Optional[str] = None
 
-    # Embedding
+    # Embedding — 向量嵌入
     embedding_model: str = "text-embedding-3-small"
     embedding_api_key: str = ""
     embedding_base_url: Optional[str] = None
 
-    # Chroma
+    # Storage — ChromaDB
     chroma_persist_dir: str = "./data/chroma"
     chroma_collection_name: str = "career_assistant"
 
-    # Chunking
+    # Ingest — 文档摄入管线
     chunk_size: int = 800
     chunk_overlap: int = 120
-
-    # PDF rendering
     pdf_dpi: int = 200
 
-    # Dedup
     dedup_enabled: bool = True
     dedup_similarity_threshold: float = 0.92
 
-    # Server
-    host: str = "0.0.0.0"
-    port: int = 8000
+    # RAG — 检索与回答
+    # 部分第三方 API 会忽略 system message，设为 "human" 可将资料注入到用户消息中
+    context_injection: str = "human"
+    # 为 True 时给 OpenAI 模型绑定 web_search_preview 工具
+    web_search_enabled: bool = False
 
     @property
     def chroma_persist_path(self) -> Path:

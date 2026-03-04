@@ -6,11 +6,12 @@
 
 - **文档上传与解析**：支持 PDF / DOCX / PNG / JPG，通过多模态 LLM (VLM) 进行 OCR 文字提取，多级文件类型检测（文件名 → URL → Content-Type → magic bytes）
 - **向量化存储**：使用 OpenAI Embedding + ChromaDB 进行文本分块与向量存储
-- **简历全文注入**：默认 `pinned` 模式，简历不分块入库，直接全文注入 system prompt，保留完整上下文
-- **RAG 智能问答**：基于用户上传的文档进行检索增强生成，支持多种检索策略与联网搜索
+- **简历全文注入**：默认 `pinned` 模式，简历不分块入库，直接全文注入对话上下文，保留完整信息
+- **RAG 智能问答**：基于用户上传的文档进行检索增强生成，支持多种检索策略
 - **文档去重**：入库时自动检测相似文档，超过阈值则替换旧文档
-- **多 LLM 支持**：支持 OpenAI 和 Anthropic，可配置代理地址
-- **联网搜索**：OpenAI 模型支持 `web_search_preview`，可全局配置或按请求开关
+- **多 LLM 支持**：支持 OpenAI 和 Anthropic，可配置代理地址，支持全局默认模型配置
+- **联网搜索**：OpenAI 模型支持 `web_search_preview`，可通过配置全局开关
+- **资料注入模式**：支持 system message 或 human message 两种注入方式，兼容不支持 system message 的第三方 API
 - **Dify 集成**：提供 base64 / URL 上传接口和 OpenAPI Schema，可直接导入 Dify 作为工具调用
 
 ## 快速开始
@@ -32,10 +33,13 @@ cp config.yaml.example config.yaml
 编辑 `config.yaml`，完整配置项参考 `config.yaml.example`，核心配置：
 
 ```yaml
-# LLM
+# LLM — 默认模型（请求传入时以请求为准）
+chat_provider: "openai"
+chat_model: "gpt-5.1"
+
 openai_api_key: "sk-your-openai-key"
-anthropic_api_key: "sk-ant-your-anthropic-key"
 openai_base_url: null                       # 代理地址，不用代理则设为 null
+anthropic_api_key: "sk-ant-your-anthropic-key"
 anthropic_base_url: null
 
 # Embedding
@@ -45,7 +49,10 @@ embedding_base_url: null                    # 不填则复用 openai_base_url
 
 # 去重
 dedup_enabled: true
-dedup_similarity_threshold: 0.85
+dedup_similarity_threshold: 0.92
+
+# 资料注入位置："system" 或 "human"
+context_injection: "system"
 
 # 联网搜索（仅 OpenAI）
 web_search_enabled: false
@@ -121,7 +128,9 @@ curl -X POST http://localhost:8000/v1/chat \
 
 本项目提供了 `dify_openapi_schema.json`，可直接导入 Dify 平台作为自定义工具使用。
 
-### 配置步骤
+### 自定义工具配置
+
+除了导入 DSL，你也可以单独将本后端接入已有的 Dify 工作流：
 
 1. 启动后端服务，确保 Dify 能访问到服务地址
 2. 在 Dify 中进入 **工具 → 自定义工具 → 创建自定义工具**
@@ -134,7 +143,16 @@ curl -X POST http://localhost:8000/v1/chat \
    - **ingest_document**：通过 base64 上传并处理文档
    - **career_chat**：职业规划问答
 
-### Dify 工作流示例
+### 导入现成工作流（推荐）
+
+项目提供了可直接导入的 Dify DSL 文件 `dify/职业规划助手.yml`，包含完整的职业规划问答工作流：
+
+1. 在 Dify 中进入 **工作室 → 创建应用 → 导入 DSL**
+2. 上传 `dify/职业规划助手.yml`
+3. 进入应用设置，将自定义工具的服务地址改为你的实际后端地址
+4. 发布即可使用
+
+### 工作流概览
 
 ```
 用户上传文件 → [ingest_document_url] → 文档入库
@@ -161,7 +179,7 @@ curl -X POST http://localhost:8000/v1/chat \
 
 | 值 | 说明 | 默认 |
 |----|------|------|
-| `pinned` | 简历全文缓存，问答时注入 system prompt，不分块不入库 | 是 |
+| `pinned` | 简历全文缓存，问答时注入对话上下文，不分块不入库 | 是 |
 | `rag` | 简历分块入库，仅通过向量检索获取相关片段 | |
 | `hybrid` | 同时使用 pinned 全文 + RAG 检索补充 | |
 
@@ -173,6 +191,17 @@ curl -X POST http://localhost:8000/v1/chat \
 | `resume_first` | 优先检索简历相关内容 |
 | `career_first` | 优先检索职业介绍内容 |
 | `blended` | 混合检索，不区分文档类型 |
+
+### 配置参数说明
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `chat_provider` | 默认 LLM 提供商（请求传入时以请求为准） | `openai` |
+| `chat_model` | 默认模型名（请求传入时以请求为准） | `gpt-5.1` |
+| `context_injection` | 资料注入位置，`system` 或 `human` | `system` |
+| `web_search_enabled` | 是否启用联网搜索（仅 OpenAI） | `false` |
+| `dedup_enabled` | 是否启用文档去重 | `true` |
+| `dedup_similarity_threshold` | 去重相似度阈值（0-1） | `0.92` |
 
 ## 处理流程
 
@@ -197,7 +226,7 @@ VLM OCR (多模态 LLM 提取文字)
 分块 (中文友好分隔符, 800字/块)
     │
     ▼
-Embedding (text-embedding-3-large)
+Embedding (text-embedding-3-small)
     │
     ▼
 存入 ChromaDB (带 user_id 元数据隔离)
